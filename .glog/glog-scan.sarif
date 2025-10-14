@@ -12,10 +12,10 @@
           "informationUri": "https://www.glog.ai",
           "rules": [
             {
-              "id": "glog-695ac4ef-32aa-4e9c-a0a6-eb5e30f4e1fe",
+              "id": "d5c12622-9e12-38e4-947b-9b01d009aff5",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. This can lead to corruption of valid data, crash the application, or in worst case scenarios, allow an attacker to execute arbitrary code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to always ensure that the size of the data being copied does not exceed the size of the destination buffer. This can be done by using functions that limit the amount of data copied to the size of the destination buffer, such as `strncpy` or `memcpy_s` (in C11), or by manually checking the sizes before copying.\n\n## Source Code Fix Recommendation\n\nReplace the `memcpy` function with a safer alternative that checks the size of the destination buffer. For example, you can use the `memcpy_s` function, which is available in C11:\n\n```cpp\nmemcpy_s(&__temp, sizeof(_Tp), &__val, sizeof(_Tp));\n```\n\nThis function will only copy data if the size of the destination buffer is large enough to hold the data. If the buffer is not large enough, the function will not perform the copy and will instead invoke an error handler.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C standard library, so no additional libraries are required.\n\n## References\n\n- [OWASP C/C++ Vulnerabilities](https://owasp.org/www-pdf-archive/OWASP_SCP_Quick_Reference_Guide_v2.pdf)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are accessible to anonymous users at the time of writing this report."
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
               },
               "properties": {
                 "tags": [
@@ -24,10 +24,10 @@
               }
             },
             {
-              "id": "glog-57049a2e-6dfb-4572-9dda-ba64a4928a6f",
+              "id": "5e43886f-3b91-351a-9855-727ac3abcaf6",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function does not check for the size of the destination buffer, which can lead to buffer overflow if the source is larger than the destination. This is a common vulnerability in C++ programming, often exploited to execute arbitrary code, alter the intended program flow or cause a system crash (Denial of Service attacks).\n\nIn the provided code snippet `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes from the location pointed by `&__tmp` to the location pointed by `&__ret`. If the size of `__ret` is less than 8 bytes, it will cause a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`.\n\n## Source Code Fix Recommendation\n\nA safer alternative to `memcpy` is `std::copy` from the `<algorithm>` library, which is type-safe and does not suffer from buffer overflow vulnerabilities. Here is how you can use it:\n\n```cpp\n#include <algorithm>\n\nstd::copy(&__tmp, &__tmp + 8, &__ret);\n```\n\n## Library Dependencies\n\nThe `memcpy` function is part of the `<cstring>` library in C++. The `std::copy` function is part of the `<algorithm>` library.\n\n## References\n\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)"
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
               },
               "properties": {
                 "tags": [
@@ -36,10 +36,10 @@
               }
             },
             {
-              "id": "glog-0b2c8c7f-71f0-464b-aa6c-013409310e20",
+              "id": "7d41d1cc-4412-36e5-a1a1-d239ad470a49",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function does not check for the size of the destination buffer, which can lead to buffer overflow if the source is larger than the destination. This is a common vulnerability in C++ programming, often exploited to execute arbitrary code, alter the intended program flow or cause a system crash (Denial of Service attacks).\n\nIn the provided code snippet `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes from the location pointed by `&__tmp` to the location pointed by `&__ret`. If the size of `__ret` is less than 8 bytes, it will cause a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`.\n\n## Source Code Fix Recommendation\n\nA safer alternative to `memcpy` is `std::copy` from the `<algorithm>` library, which is type-safe and does not suffer from buffer overflow vulnerabilities. Here is how you can use it:\n\n```cpp\n#include <algorithm>\n\nstd::copy(&__tmp, &__tmp + 8, &__ret);\n```\n\n## Library Dependencies\n\nThe `memcpy` function is part of the `<cstring>` library in C++. The `std::copy` function is part of the `<algorithm>` library.\n\n## References\n\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)"
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If `__tmp` is not large enough to hold 8 bytes of data, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the provided code snippet:\n\n```cpp\nif(sizeof(__tmp) >= 8) {\n    memcpy(&__tmp, &__val, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this version, the size of `__tmp` is checked before calling `memcpy` to ensure that it is large enough to hold the data being copied.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active for anonymous users at the time of writing."
               },
               "properties": {
                 "tags": [
@@ -48,10 +48,10 @@
               }
             },
             {
-              "id": "glog-a74c2e57-ceae-4c41-b076-c3a50fedcc71",
+              "id": "6d21684c-b5b6-322e-904f-96c29e2adf30",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If the size of `__tmp` is less than 8 bytes, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the code snippet using `memcpy_s`:\n\n```cpp\n#include <string.h>\n\nchar __tmp[8];\nchar __val[8];\n\n// Ensure __tmp is large enough to hold __val\nif (sizeof(__tmp) >= sizeof(__val)) {\n    memcpy_s(&__tmp, sizeof(__tmp), &__val, sizeof(__val));\n}\n```\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so the only library dependency required by the code example is `<string.h>` or `<cstring>` in C++.\n\n## References\n\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)"
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If `__tmp` is not large enough to hold 8 bytes of data, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the provided code snippet:\n\n```cpp\nif(sizeof(__tmp) >= 8) {\n    memcpy(&__tmp, &__val, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this version, the size of `__tmp` is checked before calling `memcpy` to ensure that it is large enough to hold the data being copied.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active for anonymous users at the time of writing."
               },
               "properties": {
                 "tags": [
@@ -60,10 +60,10 @@
               }
             },
             {
-              "id": "glog-95067a46-de95-4a9f-b4a9-61cbdb580aff",
+              "id": "19794d41-dec6-3a3e-84b1-e99486f35f7d",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. This can lead to corruption of valid data, crash the application, or in worst case scenarios, allow an attacker to execute arbitrary code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to always ensure that the size of the data being copied does not exceed the size of the destination buffer. This can be done by using functions that limit the amount of data copied to the size of the destination buffer, such as `strncpy` or `memcpy_s` (in C11), or by manually checking the sizes before copying.\n\n## Source Code Fix Recommendation\n\nReplace the `memcpy` function with a safer alternative that checks the size of the destination buffer. For example, you can use the `memcpy_s` function, which is available in C11:\n\n```cpp\nmemcpy_s(&__temp, sizeof(_Tp), &__val, sizeof(_Tp));\n```\n\nThis function will only copy data if the size of the destination buffer is large enough to hold the data. If the buffer is not large enough, the function will not perform the copy and will instead invoke an error handler.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C standard library, so no additional libraries are required.\n\n## References\n\n- [OWASP C/C++ Vulnerabilities](https://owasp.org/www-pdf-archive/OWASP_SCP_Quick_Reference_Guide_v2.pdf)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are accessible to anonymous users at the time of writing this report."
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
               },
               "properties": {
                 "tags": [
@@ -72,10 +72,10 @@
               }
             },
             {
-              "id": "glog-67671afc-3ba6-4fe9-bdd9-476e2ebc1bc2",
+              "id": "c4baf68e-f629-35c7-9deb-b9a7019ce50e",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If the size of `__tmp` is less than 8 bytes, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the code snippet using `memcpy_s`:\n\n```cpp\n#include <string.h>\n\nchar __tmp[8];\nchar __val[8];\n\n// Ensure __tmp is large enough to hold __val\nif (sizeof(__tmp) >= sizeof(__val)) {\n    memcpy_s(&__tmp, sizeof(__tmp), &__val, sizeof(__val));\n}\n```\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so the only library dependency required by the code example is `<string.h>` or `<cstring>` in C++.\n\n## References\n\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)"
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
               },
               "properties": {
                 "tags": [
@@ -84,10 +84,226 @@
               }
             },
             {
-              "id": "glog-546c5389-be2f-4b40-9ac8-d283852238b9",
+              "id": "98e6f7fd-0992-3867-84a7-f7c47ddd5381",
               "help": {
                 "text": "",
-                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function does not check for the size of the destination buffer, which can lead to buffer overflow if the source is larger than the destination. This is a common vulnerability in C++ programming, often exploited to execute arbitrary code, alter the intended program flow or cause a system crash (Denial of Service attacks).\n\nIn the provided code snippet `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes from the location pointed by `&__tmp` to the location pointed by `&__ret`. If the size of `__ret` is less than 8 bytes, it will cause a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`.\n\n## Source Code Fix Recommendation\n\nA safer alternative to `memcpy` is `std::copy` from the `<algorithm>` library, which is type-safe and does not suffer from buffer overflow vulnerabilities. Here is how you can use it:\n\n```cpp\n#include <algorithm>\n\nstd::copy(&__tmp, &__tmp + 8, &__ret);\n```\n\n## Library Dependencies\n\nThe `memcpy` function is part of the `<cstring>` library in C++. The `std::copy` function is part of the `<algorithm>` library.\n\n## References\n\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)"
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "10043d46-f48e-306a-8cec-7d5aef946f1f",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If `__tmp` is not large enough to hold 8 bytes of data, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the provided code snippet:\n\n```cpp\nif(sizeof(__tmp) >= 8) {\n    memcpy(&__tmp, &__val, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this version, the size of `__tmp` is checked before calling `memcpy` to ensure that it is large enough to hold the data being copied.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active for anonymous users at the time of writing."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "927cbf1e-4674-36ac-bdd3-b767aa2ae6c7",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If `__tmp` is not large enough to hold 8 bytes of data, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the provided code snippet:\n\n```cpp\nif(sizeof(__tmp) >= 8) {\n    memcpy(&__tmp, &__val, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this version, the size of `__tmp` is checked before calling `memcpy` to ensure that it is large enough to hold the data being copied.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active for anonymous users at the time of writing."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "7737e8df-029d-3e54-8fea-432ceed9e70a",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If `__tmp` is not large enough to hold 8 bytes of data, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the provided code snippet:\n\n```cpp\nif(sizeof(__tmp) >= 8) {\n    memcpy(&__tmp, &__val, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this version, the size of `__tmp` is checked before calling `memcpy` to ensure that it is large enough to hold the data being copied.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active for anonymous users at the time of writing."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "1cba2f52-967a-3763-925a-4f00b624fa62",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If `__tmp` is not large enough to hold 8 bytes of data, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the provided code snippet:\n\n```cpp\nif(sizeof(__tmp) >= 8) {\n    memcpy(&__tmp, &__val, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this version, the size of `__tmp` is checked before calling `memcpy` to ensure that it is large enough to hold the data being copied.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active for anonymous users at the time of writing."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "0cc1a7cf-f6ff-3b7f-946b-3d04b1ea0858",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "8ef41cf8-a637-37fe-90f8-93096492aed3",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "3004c7dc-3937-38fc-8c71-d8d8e616eab9",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "5598555b-e5ab-3b53-944d-66fc14910afb",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If `__tmp` is not large enough to hold 8 bytes of data, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the provided code snippet:\n\n```cpp\nif(sizeof(__tmp) >= 8) {\n    memcpy(&__tmp, &__val, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this version, the size of `__tmp` is checked before calling `memcpy` to ensure that it is large enough to hold the data being copied.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active for anonymous users at the time of writing."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "90328b54-620e-358a-8a30-f9cc318da1be",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If `__tmp` is not large enough to hold 8 bytes of data, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the provided code snippet:\n\n```cpp\nif(sizeof(__tmp) >= 8) {\n    memcpy(&__tmp, &__val, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this version, the size of `__tmp` is checked before calling `memcpy` to ensure that it is large enough to hold the data being copied.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active for anonymous users at the time of writing."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "782f7ab8-3971-32a8-ac9a-6e350bfad1e7",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If `__tmp` is not large enough to hold 8 bytes of data, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the provided code snippet:\n\n```cpp\nif(sizeof(__tmp) >= 8) {\n    memcpy(&__tmp, &__val, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this version, the size of `__tmp` is checked before calling `memcpy` to ensure that it is large enough to hold the data being copied.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active for anonymous users at the time of writing."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "02dba7bb-44ac-3539-84b7-5d64851b81cc",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If `__tmp` is not large enough to hold 8 bytes of data, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the provided code snippet:\n\n```cpp\nif(sizeof(__tmp) >= 8) {\n    memcpy(&__tmp, &__val, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this version, the size of `__tmp` is checked before calling `memcpy` to ensure that it is large enough to hold the data being copied.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active for anonymous users at the time of writing."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "70724bd0-79ca-3aa7-8218-38a9cbdd1945",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "4e8ba91c-d20b-36be-9c04-7229071753ac",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "b1c333f9-ac8d-3ae0-acf9-e45bbe6d8cff",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "2c9f6d4b-3e3b-3353-83ef-ebb3ee666eaf",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "cdbf33b3-0548-3009-835b-e112c1d11f4e",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__ret, &__tmp, 8)`, the function is copying 8 bytes of data from `__tmp` to `__ret`. If `__ret` is not large enough to hold 8 bytes, this could result in a buffer overflow, potentially leading to arbitrary code execution, data corruption, or program crashes.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a possible fix for the provided code snippet:\n\n```cpp\nif(sizeof(__ret) >= 8) {\n    memcpy(&__ret, &__tmp, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this fixed code, `memcpy` is only called if `__ret` is large enough to hold 8 bytes of data. If it is not, an error is handled instead.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP and CWE Links\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that these links are subject to change and may not be accessible in the future."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "b3fc63ee-ee5b-3ea2-913c-722a6af17996",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If `__tmp` is not large enough to hold 8 bytes of data, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the provided code snippet:\n\n```cpp\nif(sizeof(__tmp) >= 8) {\n    memcpy(&__tmp, &__val, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this version, the size of `__tmp` is checked before calling `memcpy` to ensure that it is large enough to hold the data being copied.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active for anonymous users at the time of writing."
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "7f83e650-0c56-39a4-be0c-bff5a3b3df26",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `memcpy` function in C++ is used to copy a block of memory from one location to another. This function is vulnerable to buffer overflow attacks if the size of the data being copied is larger than the size of the destination buffer. In the provided code snippet, `memcpy(&__tmp, &__val, 8)`, the function is copying 8 bytes of data from the location pointed to by `&__val` to the location pointed to by `&__tmp`. If `__tmp` is not large enough to hold 8 bytes of data, this could result in a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should always ensure that the destination buffer is large enough to hold the data being copied. This can be done by checking the size of the destination buffer before calling `memcpy`. Additionally, consider using safer alternatives to `memcpy`, such as `strncpy` or `memcpy_s`, which include a length parameter to prevent buffer overflows.\n\n## Source Code Fix Recommendation\n\nHere is a safer version of the provided code snippet:\n\n```cpp\nif(sizeof(__tmp) >= 8) {\n    memcpy(&__tmp, &__val, 8);\n} else {\n    // Handle error\n}\n```\n\nIn this version, the size of `__tmp` is checked before calling `memcpy` to ensure that it is large enough to hold the data being copied.\n\n## Library Dependencies\n\nThe `memcpy` function is part of the C Standard Library, so no additional library dependencies are required for the provided code snippet.\n\n## OWASP Resources\n\n- [Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n\nPlease note that the links provided are valid and active for anonymous users at the time of writing."
               },
               "properties": {
                 "tags": [
@@ -107,7 +323,7 @@
       "language": "en-US",
       "results": [
         {
-          "ruleId": "glog-695ac4ef-32aa-4e9c-a0a6-eb5e30f4e1fe",
+          "ruleId": "d5c12622-9e12-38e4-947b-9b01d009aff5",
           "kind": "fail",
           "level": "note",
           "message": {
@@ -117,72 +333,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda.h"
-                },
-                "region": {
-                  "startLine": 172,
-                  "startColumn": 4,
-                  "endLine": 172,
-                  "endColumn": 39,
-                  "charOffset": 6907,
-                  "charLength": 35,
-                  "snippet": {
-                    "text": "memcpy(&__temp, &__val, sizeof(_Tp)",
-                    "rendered": {
-                      "text": "memcpy(&__temp, &__val, sizeof(_Tp)",
-                      "markdown": "`memcpy(&__temp, &__val, sizeof(_Tp)`"
-                    }
-                  },
-                  "sourceLanguage": "c"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda.h"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 6907,
-                        "charLength": 35
-                      },
-                      "insertedContent": {
-                        "text": "memcpy_s(&__temp, <size of &__temp>,  &__val,  sizeof(_Tp)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "glog-57049a2e-6dfb-4572-9dda-ba64a4928a6f",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Detected Vulnerability in C Function (memcpy)"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
                 },
                 "region": {
                   "startLine": 3561,
@@ -211,7 +362,7 @@
               "artifactChanges": [
                 {
                   "artifactLocation": {
-                    "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
                   },
                   "replacements": [
                     {
@@ -237,7 +388,7 @@
           }
         },
         {
-          "ruleId": "glog-0b2c8c7f-71f0-464b-aa6c-013409310e20",
+          "ruleId": "5e43886f-3b91-351a-9855-727ac3abcaf6",
           "kind": "fail",
           "level": "note",
           "message": {
@@ -247,7 +398,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
                 },
                 "region": {
                   "startLine": 3528,
@@ -276,7 +427,7 @@
               "artifactChanges": [
                 {
                   "artifactLocation": {
-                    "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
                   },
                   "replacements": [
                     {
@@ -302,7 +453,7 @@
           }
         },
         {
-          "ruleId": "glog-a74c2e57-ceae-4c41-b076-c3a50fedcc71",
+          "ruleId": "7d41d1cc-4412-36e5-a1a1-d239ad470a49",
           "kind": "fail",
           "level": "note",
           "message": {
@@ -312,7 +463,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
                 },
                 "region": {
                   "startLine": 3535,
@@ -341,7 +492,7 @@
               "artifactChanges": [
                 {
                   "artifactLocation": {
-                    "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
                   },
                   "replacements": [
                     {
@@ -367,7 +518,7 @@
           }
         },
         {
-          "ruleId": "glog-95067a46-de95-4a9f-b4a9-61cbdb580aff",
+          "ruleId": "6d21684c-b5b6-322e-904f-96c29e2adf30",
           "kind": "fail",
           "level": "note",
           "message": {
@@ -377,72 +528,7 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda.h"
-                },
-                "region": {
-                  "startLine": 179,
-                  "startColumn": 4,
-                  "endLine": 179,
-                  "endColumn": 39,
-                  "charOffset": 7161,
-                  "charLength": 35,
-                  "snippet": {
-                    "text": "memcpy(&__temp, &__val, sizeof(_Tp)",
-                    "rendered": {
-                      "text": "memcpy(&__temp, &__val, sizeof(_Tp)",
-                      "markdown": "`memcpy(&__temp, &__val, sizeof(_Tp)`"
-                    }
-                  },
-                  "sourceLanguage": "c"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda.h"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 7161,
-                        "charLength": 35
-                      },
-                      "insertedContent": {
-                        "text": "memcpy_s(&__temp, <size of &__temp>,  &__val,  sizeof(_Tp)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "glog-67671afc-3ba6-4fe9-bdd9-476e2ebc1bc2",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Detected Vulnerability in C Function (memcpy)"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
                 },
                 "region": {
                   "startLine": 3503,
@@ -471,7 +557,7 @@
               "artifactChanges": [
                 {
                   "artifactLocation": {
-                    "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
                   },
                   "replacements": [
                     {
@@ -497,7 +583,7 @@
           }
         },
         {
-          "ruleId": "glog-546c5389-be2f-4b40-9ac8-d283852238b9",
+          "ruleId": "19794d41-dec6-3a3e-84b1-e99486f35f7d",
           "kind": "fail",
           "level": "note",
           "message": {
@@ -507,7 +593,137 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3454,
+                  "startColumn": 4,
+                  "endLine": 3454,
+                  "endColumn": 29,
+                  "charOffset": 259763,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__ret, &__tmp, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__ret, &__tmp, 8)",
+                      "markdown": "`memcpy(&__ret, &__tmp, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 259763,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__ret, <size of &__ret>,  &__tmp,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "c4baf68e-f629-35c7-9deb-b9a7019ce50e",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3412,
+                  "startColumn": 4,
+                  "endLine": 3412,
+                  "endColumn": 29,
+                  "charOffset": 256743,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__ret, &__tmp, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__ret, &__tmp, 8)",
+                      "markdown": "`memcpy(&__ret, &__tmp, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 256743,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__ret, <size of &__ret>,  &__tmp,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "98e6f7fd-0992-3867-84a7-f7c47ddd5381",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
                 },
                 "region": {
                   "startLine": 3496,
@@ -536,7 +752,7 @@
               "artifactChanges": [
                 {
                   "artifactLocation": {
-                    "uri": "include/hip/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
                   },
                   "replacements": [
                     {
@@ -546,6 +762,1176 @@
                       },
                       "insertedContent": {
                         "text": "memcpy_s(&__ret, <size of &__ret>,  &__tmp,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "10043d46-f48e-306a-8cec-7d5aef946f1f",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3471,
+                  "startColumn": 4,
+                  "endLine": 3471,
+                  "endColumn": 29,
+                  "charOffset": 261560,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__tmp, &__val, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__tmp, &__val, 8)",
+                      "markdown": "`memcpy(&__tmp, &__val, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 261560,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__tmp, <size of &__tmp>,  &__val,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "927cbf1e-4674-36ac-bdd3-b767aa2ae6c7",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3387,
+                  "startColumn": 4,
+                  "endLine": 3387,
+                  "endColumn": 29,
+                  "charOffset": 255524,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__tmp, &__val, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__tmp, &__val, 8)",
+                      "markdown": "`memcpy(&__tmp, &__val, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 255524,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__tmp, <size of &__tmp>,  &__val,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "7737e8df-029d-3e54-8fea-432ceed9e70a",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3429,
+                  "startColumn": 4,
+                  "endLine": 3429,
+                  "endColumn": 29,
+                  "charOffset": 258544,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__tmp, &__val, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__tmp, &__val, 8)",
+                      "markdown": "`memcpy(&__tmp, &__val, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 258544,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__tmp, <size of &__tmp>,  &__val,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "1cba2f52-967a-3763-925a-4f00b624fa62",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3350,
+                  "startColumn": 4,
+                  "endLine": 3350,
+                  "endColumn": 29,
+                  "charOffset": 252537,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__tmp, &__val, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__tmp, &__val, 8)",
+                      "markdown": "`memcpy(&__tmp, &__val, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 252537,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__tmp, <size of &__tmp>,  &__val,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "0cc1a7cf-f6ff-3b7f-946b-3d04b1ea0858",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3301,
+                  "startColumn": 4,
+                  "endLine": 3301,
+                  "endColumn": 29,
+                  "charOffset": 247784,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__ret, &__tmp, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__ret, &__tmp, 8)",
+                      "markdown": "`memcpy(&__ret, &__tmp, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 247784,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__ret, <size of &__ret>,  &__tmp,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "8ef41cf8-a637-37fe-90f8-93096492aed3",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3375,
+                  "startColumn": 4,
+                  "endLine": 3375,
+                  "endColumn": 29,
+                  "charOffset": 253756,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__ret, &__tmp, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__ret, &__tmp, 8)",
+                      "markdown": "`memcpy(&__ret, &__tmp, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 253756,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__ret, <size of &__ret>,  &__tmp,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "3004c7dc-3937-38fc-8c71-d8d8e616eab9",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3338,
+                  "startColumn": 4,
+                  "endLine": 3338,
+                  "endColumn": 29,
+                  "charOffset": 250771,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__ret, &__tmp, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__ret, &__tmp, 8)",
+                      "markdown": "`memcpy(&__ret, &__tmp, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 250771,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__ret, <size of &__ret>,  &__tmp,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "5598555b-e5ab-3b53-944d-66fc14910afb",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3239,
+                  "startColumn": 4,
+                  "endLine": 3239,
+                  "endColumn": 29,
+                  "charOffset": 243580,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__tmp, &__val, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__tmp, &__val, 8)",
+                      "markdown": "`memcpy(&__tmp, &__val, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 243580,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__tmp, <size of &__tmp>,  &__val,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "90328b54-620e-358a-8a30-f9cc318da1be",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3276,
+                  "startColumn": 4,
+                  "endLine": 3276,
+                  "endColumn": 29,
+                  "charOffset": 246565,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__tmp, &__val, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__tmp, &__val, 8)",
+                      "markdown": "`memcpy(&__tmp, &__val, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 246565,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__tmp, <size of &__tmp>,  &__val,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "782f7ab8-3971-32a8-ac9a-6e350bfad1e7",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3313,
+                  "startColumn": 4,
+                  "endLine": 3313,
+                  "endColumn": 29,
+                  "charOffset": 249552,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__tmp, &__val, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__tmp, &__val, 8)",
+                      "markdown": "`memcpy(&__tmp, &__val, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 249552,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__tmp, <size of &__tmp>,  &__val,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "02dba7bb-44ac-3539-84b7-5d64851b81cc",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3202,
+                  "startColumn": 4,
+                  "endLine": 3202,
+                  "endColumn": 29,
+                  "charOffset": 240634,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__tmp, &__val, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__tmp, &__val, 8)",
+                      "markdown": "`memcpy(&__tmp, &__val, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 240634,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__tmp, <size of &__tmp>,  &__val,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "70724bd0-79ca-3aa7-8218-38a9cbdd1945",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3264,
+                  "startColumn": 4,
+                  "endLine": 3264,
+                  "endColumn": 29,
+                  "charOffset": 244799,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__ret, &__tmp, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__ret, &__tmp, 8)",
+                      "markdown": "`memcpy(&__ret, &__tmp, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 244799,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__ret, <size of &__ret>,  &__tmp,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "4e8ba91c-d20b-36be-9c04-7229071753ac",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3227,
+                  "startColumn": 4,
+                  "endLine": 3227,
+                  "endColumn": 29,
+                  "charOffset": 241853,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__ret, &__tmp, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__ret, &__tmp, 8)",
+                      "markdown": "`memcpy(&__ret, &__tmp, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 241853,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__ret, <size of &__ret>,  &__tmp,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "b1c333f9-ac8d-3ae0-acf9-e45bbe6d8cff",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3190,
+                  "startColumn": 4,
+                  "endLine": 3190,
+                  "endColumn": 29,
+                  "charOffset": 238903,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__ret, &__tmp, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__ret, &__tmp, 8)",
+                      "markdown": "`memcpy(&__ret, &__tmp, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 238903,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__ret, <size of &__ret>,  &__tmp,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "2c9f6d4b-3e3b-3353-83ef-ebb3ee666eaf",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3153,
+                  "startColumn": 4,
+                  "endLine": 3153,
+                  "endColumn": 29,
+                  "charOffset": 236010,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__ret, &__tmp, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__ret, &__tmp, 8)",
+                      "markdown": "`memcpy(&__ret, &__tmp, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 236010,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__ret, <size of &__ret>,  &__tmp,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "cdbf33b3-0548-3009-835b-e112c1d11f4e",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3116,
+                  "startColumn": 4,
+                  "endLine": 3116,
+                  "endColumn": 29,
+                  "charOffset": 233135,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__ret, &__tmp, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__ret, &__tmp, 8)",
+                      "markdown": "`memcpy(&__ret, &__tmp, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 233135,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__ret, <size of &__ret>,  &__tmp,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "b3fc63ee-ee5b-3ea2-913c-722a6af17996",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3128,
+                  "startColumn": 4,
+                  "endLine": 3128,
+                  "endColumn": 29,
+                  "charOffset": 234805,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__tmp, &__val, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__tmp, &__val, 8)",
+                      "markdown": "`memcpy(&__tmp, &__val, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 234805,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__tmp, <size of &__tmp>,  &__val,  8)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "7f83e650-0c56-39a4-be0c-bff5a3b3df26",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Detected Vulnerability in C Function (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                },
+                "region": {
+                  "startLine": 3165,
+                  "startColumn": 4,
+                  "endLine": 3165,
+                  "endColumn": 29,
+                  "charOffset": 237691,
+                  "charLength": 25,
+                  "snippet": {
+                    "text": "memcpy(&__tmp, &__val, 8)",
+                    "rendered": {
+                      "text": "memcpy(&__tmp, &__val, 8)",
+                      "markdown": "`memcpy(&__tmp, &__val, 8)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "include/cuda/std/detail/libcxx/include/support/atomic/atomic_cuda_generated.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 237691,
+                        "charLength": 25
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(&__tmp, <size of &__tmp>,  &__val,  8)"
                       }
                     }
                   ]
